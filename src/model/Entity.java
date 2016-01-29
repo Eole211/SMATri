@@ -27,9 +27,5 @@ public abstract class Entity {
         return m_string;
     } 
     
-    public void setCurrentCase(Case c) {
-    	this.m_grid.m_cases[c.m_x][c.m_y] = this.m_grid.m_cases[m_currentCase.m_x][m_currentCase.m_y];
-    	this.m_grid.m_cases[m_currentCase.m_x][m_currentCase.m_y] = null;
-    	this.m_currentCase = c;
-    }
+  
 }

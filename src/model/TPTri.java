@@ -21,13 +21,21 @@ public class TPTri {
         //mw.drawGrid(g);
     	Grid g = Grid.getInstance();
     	System.out.println(g.toString());
+        
+         MainWindow mainWindow = new MainWindow();
+            mainWindow.setVisible(true);
+            mainWindow.drawGrid(g);
+            
     	g.startAgents();
     	long start = System.currentTimeMillis();
     	int count = 0;
     	while (true) {
-    		if ( System.currentTimeMillis() > (start + (500 * count)) ) {
+    		if (System.currentTimeMillis()-start>100) {
+                 
     			System.out.println(g.toString());
-    			count++;
+                        
+                        start=System.currentTimeMillis();
+    			//count++;
     		}
     	}
     }

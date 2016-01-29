@@ -8,12 +8,14 @@ package model;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import sun.nio.cs.AbstractCharsetProvider;
 
 /**
  *
  * @author Léo
  */
 public class Agent extends Entity implements Runnable {
+        static boolean m_talkative=true;
 	enum MemType {
 		O, A, B
 	};
@@ -21,7 +23,7 @@ public class Agent extends Entity implements Runnable {
 	private static final int s_maxMemorySize = 8;
 	private LinkedList<MemType> m_memory;
 	private int step = 1;
-	private Entity carriedItem;
+	private Entity carriedItem=null;
 	private final double KPLUS = 0.1;
 	private final double KMINUS = 0.3;
         Object m_sem;
@@ -47,33 +49,50 @@ public class Agent extends Entity implements Runnable {
 		}
 	}
 
+        
+        @Override
 	public void run() {
 		boolean finished = false;
 		
 		while(!finished) {
 			
 			if(null != carriedItem) {
-				System.out.println(this.toString() + " Porte un objet");
-				Case dropCase = dropItem();
-				if(null == dropCase) {
-					System.out.println(this.toString() + " Se d�place");
+                                if(m_talkative)
+                                    System.out.println(this.toString() + " Porte un objet");
+				boolean dropCase = dropItem();
+				if(!dropCase) {
+                                       if(m_talkative)
+                                            System.out.println(this.toString() + " Se d�place");
 					move();
 				}
 				else {
+                                    if(m_talkative)
 					System.out.println(this.toString() + " Lache l'objet");
 				}
 			}
 			else {
-				System.out.println(this.toString() + " Ne porte pas d'objet");
+                                if(m_talkative)
+                                    System.out.println(this.toString() + " Ne porte pas d'objet");
 				boolean itemGrabbed = grabItem();
 				if(!itemGrabbed) {
-					System.out.println(this.toString() + " Se d�place2");
+                                        if(m_talkative)
+                                            System.out.println(this.toString() + " Se d�place2");
 					move();
 				}
 				else {
+                                    if(m_talkative)
 					System.out.println(this.toString() + " Attrape un objet");
 				}
 			}
+                        try{
+                            Thread.sleep(100);
+                        }
+                        catch(Exception e){
+                            System.err.println(e);
+                        }
+                             if (MainWindow.getInstance() != null) {
+                    MainWindow.getInstance().drawGrid(m_grid);
+                }
 		}
 		
 	}
@@ -97,8 +116,10 @@ public class Agent extends Entity implements Runnable {
 	
 	private ArrayList<Case> freeNeighbors() {
 		ArrayList<Case> freeNeighbors = new ArrayList<Case>();
-		for(Case c : neighbors()) {
-			if(null != c && null == c.m_entity) {
+                ArrayList<Case> neighb= neighbors();
+		for(Case c:neighb) {
+			if( c!=null  &&  c.m_agent==null) {
+                             // System.out.println("addfree");
 				freeNeighbors.add(c);
 			}
 		}
@@ -107,8 +128,15 @@ public class Agent extends Entity implements Runnable {
 	
 	private void move() {
             synchronized(m_sem){
+                if(m_currentCase!=null && m_currentCase.m_item!=null){
+                    addToMem(m_currentCase.m_item.getString());
+                }
+                else 
+                    addToMem(null);
+                //System.out.println("se déplace");
 		ArrayList<Case> freeNeighbors = freeNeighbors();
 		if(freeNeighbors.size() > 0) {
+                    System.out.println("feengihb>0");
 			int rand = (int) Math.floor((Math.random() * freeNeighbors.size()));
 			this.setCurrentCase(freeNeighbors.get(rand));
 		}
@@ -117,6 +145,7 @@ public class Agent extends Entity implements Runnable {
 
 	private boolean grabItem() {
             synchronized(m_sem){
+                /*
 		ArrayList<Case> listAAround = new ArrayList<Case>();
 		ArrayList<Case> listBAround = new ArrayList<Case>();
 		ArrayList<Case> l = neighbors();
@@ -131,35 +160,35 @@ public class Agent extends Entity implements Runnable {
 			}
                     }
 		}
-		double rand = Math.random();
-		double pA = Math.pow(KPLUS/(KPLUS + countItemsInMemory(m_memory, MemType.A)/s_maxMemorySize), 2);
-		double pB = Math.pow(KPLUS/(KPLUS + countItemsInMemory(m_memory, MemType.B)/s_maxMemorySize), 2);
-		Case selectedItem = null;
-		if(!listAAround.isEmpty() && rand < pA) {
-			selectedItem = listAAround.get( ((int)Math.floor((Math.random() * listAAround.size()))) );
-		}
-		else if(!listBAround.isEmpty() && rand < pB + pA) {
-			selectedItem = listBAround.get( ((int)Math.floor((Math.random() * listBAround.size()))) );
-		}
+                        */
+                if(this.m_currentCase.m_item!=null){
+                    double p;
+                    if(this.m_currentCase.m_item.getClass()==ItemA.class){
+                         p= Math.pow(KPLUS/(KPLUS + countItemsInMemory(m_memory, MemType.A)/s_maxMemorySize), 2);
+                    }
+                    else{
+                        p = Math.pow(KPLUS/(KPLUS + countItemsInMemory(m_memory, MemType.B)/s_maxMemorySize), 2);
+                    
+                    }
+                    double rand = Math.random();
+                    if(rand<p){
+                        this.carriedItem=m_currentCase.m_item;
+                        m_currentCase.setItem(null);
+                    }           
+                }
+                return (carriedItem!=null);		
 		
-		if(null != selectedItem) {
-			System.out.println("Selected item :" + selectedItem.m_stringToDraw);
-			this.carriedItem = selectedItem.m_entity;
-			selectedItem.m_grid.m_cases[selectedItem.m_x][selectedItem.m_y] = null;
-			return true;
-		}
-		return false;
             }
 	}
 	
-	private Case dropItem() {
+	private boolean dropItem() {
             synchronized(m_sem){
 		double rand = Math.random();
 		String letter = (this.carriedItem.m_string);
 		double p;
 		ArrayList<Case> freeNeighbors = freeNeighbors();
-		if(0 == freeNeighbors.size()) {
-			return null;
+		if(this.m_currentCase.m_item==null ){
+			return false;
 		}
 		if(letter.equals("A")) {
 			p = Math.pow( (countItemsAround(MemType.A)/freeNeighbors.size()) / (KMINUS+(countItemsAround(MemType.A)/freeNeighbors.size()) ), 2);
@@ -168,13 +197,13 @@ public class Agent extends Entity implements Runnable {
 			p = Math.pow( (countItemsAround(MemType.B)/freeNeighbors.size()) / (KMINUS+(countItemsAround(MemType.B)/freeNeighbors.size()) ), 2);
 		}
 		if(rand < p && freeNeighbors.size() > 0) {
-			int rand2 = (int) Math.floor((Math.random() * freeNeighbors.size()));
-			Case dropCase = freeNeighbors.get(rand2);
-			this.m_grid.m_cases[dropCase.m_x][dropCase.m_y].m_entity = this.carriedItem;
+			//int rand2 = (int) Math.floor((Math.random() * freeNeighbors.size()));
+			//Case dropCase = freeNeighbors.get(rand2);
+			this.m_grid.m_cases[m_currentCase.m_x][m_currentCase.m_y].setItem(carriedItem);
 			this.carriedItem = null;
-			return dropCase;
+			return true;
 		}
-		return null;
+		return false;
             }
 	}
 	 
@@ -204,4 +233,13 @@ public class Agent extends Entity implements Runnable {
 		}
 		return count;
 	}
+        
+      public void setCurrentCase(Case c) {
+    	//this.m_grid.m_cases[c.m_x][c.m_y] = this.m_grid.m_cases[m_currentCase.m_x][m_currentCase.m_y];
+    	//this.m_grid.m_cases[m_currentCase.m_x][m_currentCase.m_y] = null;
+    	//System.out.println("currentcasechange");
+        this.m_grid.m_cases[c.m_x][c.m_y].setAgent(this);
+        this.m_grid.m_cases[m_currentCase.m_x][m_currentCase.m_y].setAgent(null);
+        this.m_currentCase = c;
+    }
 }

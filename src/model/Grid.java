@@ -9,9 +9,9 @@ import java.util.Timer;
  * Created by Léo on 02-11-15. Grille
  */
 public class Grid {
-	final int M_SIZEX = 10; //50
-	final int M_SIZEY = 10; //50
-	final int M_NBAGENTS = 3; //20
+	public final int M_SIZEX = 10; //50
+	public final int M_SIZEY = 10; //50
+	final int M_NBAGENTS = 8; //20
 	final int M_NB_A = 10; //200
 	final int M_NB_B = 10; //20
 	List<Agent> m_lAgents;
@@ -83,7 +83,7 @@ public class Grid {
 			do {
 				x = rnd.nextInt(M_SIZEX);
 				y = rnd.nextInt(M_SIZEY);
-			} while (m_cases[x][y].getEntity() != null);
+			} while (m_cases[x][y].getAgent()!= null);
 
 			return new Case(x, y, this);
 		} else {
@@ -94,21 +94,21 @@ public class Grid {
 	public Agent addAgent() {
 		Agent a = new Agent(getRandomCase());
 		m_lAgents.add(a);
-		m_cases[a.m_currentCase.m_x][a.m_currentCase.m_y].setEntity(a);
+		m_cases[a.m_currentCase.m_x][a.m_currentCase.m_y].setAgent(a);
 		return a;
 	}
 
 	public ItemA addItemA() {
 		ItemA a = new ItemA(getRandomCase());
 		m_lItemsA.add(a);
-		m_cases[a.m_currentCase.m_x][a.m_currentCase.m_y].setEntity(a);
+		m_cases[a.m_currentCase.m_x][a.m_currentCase.m_y].setItem(a);
 		return a;
 	}
 
 	public ItemB addItemB() {
 		ItemB a = new ItemB(getRandomCase());
 		m_lItemsB.add(a);
-		m_cases[a.m_currentCase.m_x][a.m_currentCase.m_y].setEntity(a);
+		m_cases[a.m_currentCase.m_x][a.m_currentCase.m_y].setItem(a);
 		return a;
 	}
 
@@ -124,32 +124,38 @@ public class Grid {
 	 *            true : cases occupées, false cases libres
 	 * @return
 	 */
+        /*
 	public List<Case> getFreeNeighbors(int x, int y, boolean free) {
 		Case[][] cases = m_cases;
 		List<Case> emptyNeighb = new LinkedList<>();
 		if (x > 0) {
-			if ((cases[x - 1][y].getEntity() == null) == free) {
+                    System.out.println("x :"+x);
+                        Entity ent=cases[x - 1][y].getEntity();
+			if ((ent == null || ent.getClass()!=Agent.class) == free) {
 				emptyNeighb.add(cases[x - 1][y]);
 			}
 		}
 		if (x < this.M_SIZEX - 1) {
-			if ((cases[x + 1][y].getEntity() == null) == free) {
+                     Entity ent=cases[x + 1][y].getEntity();
+			if ((ent == null || ent.getClass()!=Agent.class) == free) {
 				emptyNeighb.add(cases[x + 1][y]);
 			}
 		}
 		if (y > 0) {
-			if ((cases[x][y - 1].getEntity() == null) == free) {
+                     Entity ent=cases[x][y - 1].getEntity();
+			if ((ent == null || ent.getClass()!=Agent.class) == free) {
 				emptyNeighb.add(cases[x][y - 1]);
 			}
 		}
 		if (y < this.M_SIZEY - 1) {
-			if ((cases[x][y + 1].getEntity() == null) == free) {
+                     Entity ent=cases[x][y + 1].getEntity();
+			if ((ent == null || ent.getClass()!=Agent.class) == free) {
 				emptyNeighb.add(cases[x][y + 1]);
 			}
 		}
 		return emptyNeighb;
 	}
-
+*/
 	public Case[][] getCases() {
 		return m_cases;
 	}
@@ -179,8 +185,8 @@ public class Grid {
 		for (int i = 0; i < M_SIZEY; i++) {
 			for (int j = 0; j < M_SIZEX; j++) {
 				s += "|";
-				if (m_cases[j][i] != null && m_cases[j][i].getEntity()!=null) {
-					s += m_cases[j][i].getEntity().getString();
+				if (m_cases[j][i] != null && m_cases[j][i].getStringToDraw()!=null) {
+					s += m_cases[j][i].getStringToDraw();
 				} else {
 					s += " ";
 				}
