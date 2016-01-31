@@ -40,6 +40,19 @@ public class Grid {
             }
             return n;
         }
+        
+        int nbItemsOnGrid(){
+            int n=0;
+            for (int i = 0; i < M_SIZEX; i++) {
+			for (int j = 0; j < M_SIZEY; j++) {
+                            
+				if(this.getCases()[i][j].getItem()!=null){
+                                    n++;
+                                } 
+			}
+		}
+            return n;
+        }
 	/**
 	 * singleton
 	 * 

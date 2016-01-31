@@ -28,8 +28,14 @@ public class TPTri {
 		long start = System.currentTimeMillis();
 		while (true) {
 			if (System.currentTimeMillis() - start > 100) {
-
-				mainWindow.setCarried(g.nbCarriedItem());
+                                int car=g.nbCarriedItem();
+				int ongrid=g.nbItemsOnGrid();
+                                
+                                mainWindow.setCarried(car);
+                                
+				mainWindow.setOngrid(ongrid);
+                                
+                                mainWindow.setTotal(car+ongrid);
 
 				start = System.currentTimeMillis();
 			}

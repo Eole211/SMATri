@@ -56,7 +56,7 @@ public class Case {
 
 	public String refreshString() {
 		if (m_agent != null && m_item != null) {
-			m_stringToDraw = "Q";
+			m_stringToDraw = m_item.getString()+m_agent.getString();
 		} else {
 			if (m_agent != null) {
 				m_stringToDraw = m_agent.getString();
@@ -65,7 +65,7 @@ public class Case {
                         }
 			else {
                            // System.out.println("tonull");
-				m_stringToDraw = " ";
+				m_stringToDraw = "  ";
 			}
 		}
                 return m_stringToDraw;

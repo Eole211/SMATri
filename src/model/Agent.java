@@ -14,7 +14,7 @@ import java.util.LinkedList;
  * @author Léo
  */
 public class Agent extends Entity implements Runnable {
-	static boolean m_talkative = false;
+	static boolean m_talkative = true;
 
 	enum MemType {
 		O, A, B
@@ -56,25 +56,20 @@ public class Agent extends Entity implements Runnable {
 		while (!finished) {
 
 			if (null != carriedItem) {
-				if (m_talkative)
-					System.out.println(this.toString() + " Porte un objet");
+
 				boolean dropCase = dropItem();
 				if (!dropCase) {
-					if (m_talkative)
-						System.out.println(this.toString() + " Se d�place");
 					move();
 				} else {
 					if (m_talkative)
-						System.out.println(this.toString() + " Lache l'objet");
+						System.out.println(this.toString() + " Lache l'objet case "+m_currentCase.m_x+","+m_currentCase.m_y);
 				}
 			} else {
-				if (m_talkative)
-					System.out.println(this.toString()
-							+ " Ne porte pas d'objet");
+				
 				boolean itemGrabbed = grabItem();
 				if (!itemGrabbed) {
 					if (m_talkative)
-						System.out.println(this.toString() + " Se d�place2");
+						//System.out.println(this.toString() + " Se d�place2");
 					move();
 				} else {
 					if (m_talkative)
@@ -142,7 +137,8 @@ public class Agent extends Entity implements Runnable {
 
 	private boolean grabItem() {
 		synchronized (m_sem) {
-			/*
+			
+                    /*
 			 * ArrayList<Case> listAAround = new ArrayList<Case>();
 			 * ArrayList<Case> listBAround = new ArrayList<Case>();
 			 * ArrayList<Case> l = neighbors(); l.removeAll(freeNeighbors());
@@ -174,7 +170,7 @@ public class Agent extends Entity implements Runnable {
 			String letter = (this.carriedItem.m_string);
 			double count;
 			ArrayList<Case> neighbors = neighbors();
-			if (this.m_currentCase.m_item == null) {
+			if (this.m_currentCase.m_item != null) {
 				return false;
 			}
 			if (letter.equals("A")) {
@@ -187,7 +183,7 @@ public class Agent extends Entity implements Runnable {
 			if (rand < p) {
 				//if (null == this.m_grid.m_cases[m_currentCase.m_x][m_currentCase.m_y].m_item) {
 					System.out.println("drop : " + carriedItem);
-					System.out.println("case :"+this.m_grid.m_cases[m_currentCase.m_x][m_currentCase.m_y].setItem(carriedItem));
+					System.out.println("case :"+m_currentCase.setItem(carriedItem));
 					this.carriedItem = null;
 					return true;
 				//}
