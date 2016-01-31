@@ -9,11 +9,11 @@ import java.util.Timer;
  * Created by Léo on 02-11-15. Grille
  */
 public class Grid {
-	public final int M_SIZEX = 10; // 50
-	public final int M_SIZEY = 10; // 50
+	public final int M_SIZEX = 50; // 50
+	public final int M_SIZEY = 50; // 50
 	final int M_NBAGENTS = 20; // 20
-	final int M_NB_A = 20; // 200
-	final int M_NB_B = 20; // 200
+	final int M_NB_A = 200; // 200
+	final int M_NB_B = 200; // 200
 	List<Agent> m_lAgents;
 	List<ItemA> m_lItemsA;
 	List<ItemB> m_lItemsB;

@@ -24,13 +24,16 @@ public class TPTri {
 		mainWindow.setVisible(true);
 		mainWindow.drawGrid(g);
 		System.out.println(g);
-		g.startAgents();
+		mainWindow.setSpeed(Agent.getSpeed());
+                g.startAgents();
+                
 		long start = System.currentTimeMillis();
 		while (true) {
-			if (System.currentTimeMillis() - start > 100) {
+			if (System.currentTimeMillis() - start > 10) {
                                 int car=g.nbCarriedItem();
 				int ongrid=g.nbItemsOnGrid();
-                                
+				MainWindow.getInstance().drawGrid(g);
+			
                                 mainWindow.setCarried(car);
                                 
 				mainWindow.setOngrid(ongrid);

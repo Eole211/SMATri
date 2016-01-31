@@ -16,10 +16,24 @@ import java.util.LinkedList;
 public class Agent extends Entity implements Runnable {
 	static boolean m_talkative = true;
 
+    /**
+     * @return the s_speed
+     */
+    public static int getSpeed() {
+        return s_speed;
+    }
+
+    /**
+     * @param aS_speed the s_speed to set
+     */
+    public static void setSpeed(int aS_speed) {
+        s_speed = aS_speed;
+    }
+
 	enum MemType {
 		O, A, B
 	};
-
+        private static int s_speed=450;
 	private static final int s_maxMemorySize = 8;
 	private LinkedList<MemType> m_memory;
 	private int step = 1;
@@ -78,13 +92,11 @@ public class Agent extends Entity implements Runnable {
 				}
 			}
 			try {
-				Thread.sleep(100);
+				Thread.sleep(500-getSpeed());
 			} catch (Exception e) {
 				System.err.println(e);
 			}
-			if (MainWindow.getInstance() != null) {
-				MainWindow.getInstance().drawGrid(m_grid);
-			}
+			
 		}
 
 	}
