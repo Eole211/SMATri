@@ -12,32 +12,29 @@ package model;
  */
 public class TPTri {
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-    	//Grid g = Grid.getInstance();
-    	//MainWindow mw = MainWindow.getInstance();
-        //mw.drawGrid(g);
-    	Grid g = Grid.getInstance();
-    	System.out.println(g.toString());
-        
-         MainWindow mainWindow = new MainWindow();
-            mainWindow.setVisible(true);
-            mainWindow.drawGrid(g);
-            
-    	g.startAgents();
-    	long start = System.currentTimeMillis();
-    	int count = 0;
-    	while (true) {
-    		if (System.currentTimeMillis()-start>100) {
-                 
-    			System.out.println(g.toString());
-                        
-                        start=System.currentTimeMillis();
-    			//count++;
-    		}
-    	}
-    }
-    
+	/**
+	 * @param args
+	 *            the command line arguments
+	 */
+	public static void main(String[] args) {
+		Grid g = Grid.getInstance();
+		System.out.println(g.toString());
+
+		MainWindow mainWindow = new MainWindow();
+		mainWindow.setVisible(true);
+		mainWindow.drawGrid(g);
+		System.out.println(g);
+		g.startAgents();
+		long start = System.currentTimeMillis();
+		while (true) {
+			if (System.currentTimeMillis() - start > 100) {
+
+				mainWindow.setCarried(g.nbCarriedItem());
+
+				start = System.currentTimeMillis();
+			}
+		}
+                
+	}
+
 }

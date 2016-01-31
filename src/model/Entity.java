@@ -27,5 +27,11 @@ public abstract class Entity {
         return m_string;
     } 
     
-  
+    public void setCase(Case c)
+    {
+        this.m_currentCase=c;
+    }    
+    public String toString() {
+    	return this.m_string;
+    }
 }
